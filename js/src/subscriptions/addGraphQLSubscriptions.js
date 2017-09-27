@@ -1,4 +1,4 @@
-var ActionCableSubscriber = require("./ActionCableSubscriber")
+const ActionCableSubscriber = require('./ActionCableSubscriber');
 
 /**
  * Modify an Apollo network interface to
@@ -26,7 +26,8 @@ var ActionCableSubscriber = require("./ActionCableSubscriber")
  *   });
  *
  *   // Add subscriptions to the network interface
- *   var addGraphQLSubscriptions = require("graphql-ruby-client/subscriptions/addGraphQLSubscriptions")
+ *   var addGraphQLSubscriptions =
+ *     require("graphql-ruby-client/subscriptions/addGraphQLSubscriptions")
  *   addGraphQLSubscriptions(RailsNetworkInterface, {cable: cable})
  *
  *   // Optionally, add persisted query support:
@@ -37,31 +38,29 @@ var ActionCableSubscriber = require("./ActionCableSubscriber")
  * @param {ActionCable.Consumer} options.cable - A cable for subscribing with
  * @return {void}
 */
-function addGraphQLSubscriptions(networkInterface, options) {
-  if (!options) {
-    options = {}
-  }
-
-  var subscriber
+function addGraphQLSubscriptions(networkInterface, options = {}) {
+  let subscriber;
   if (options.subscriber) {
     // Right now this is just for testing
-    subscriber = options.subscriber
+    /* eslint-disable prefer-destructuring */
+    subscriber = options.subscriber;
+    /* eslint-enable prefer-destructuring */
   } else if (options.cable) {
-    subscriber = new ActionCableSubscriber(options.cable, networkInterface)
+    subscriber = new ActionCableSubscriber(options.cable, networkInterface);
   } else {
-    throw new Error("Must provide cable: option")
+    throw new Error('Must provide cable: option');
   }
 
-  var networkInterfaceWithSubscriptions = Object.assign(networkInterface, {
-    subscribe: function(request, handler) {
-      var id = subscriber.subscribe(request, handler)
-      return id
+  const networkInterfaceWithSubscriptions = Object.assign(networkInterface, {
+    subscribe(request, handler) {
+      const id = subscriber.subscribe(request, handler);
+      return id;
     },
     unsubscribe(id) {
-      subscriber.unsubscribe(id)
+      subscriber.unsubscribe(id);
     },
-  })
-  return networkInterfaceWithSubscriptions
+  });
+  return networkInterfaceWithSubscriptions;
 }
 
-module.exports = addGraphQLSubscriptions
+module.exports = addGraphQLSubscriptions;
